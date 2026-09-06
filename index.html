@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>Praxto — Start an Enquiry</title>
+<link rel="icon" type="image/jpeg" href="asset/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F6F5F3;
+    --surface: #FFFFFF;
+    --surface-2: #FBFAF8;
+    --ink: #1B1A1F;
+    --muted: #6E6B76;
+    --line: #E2E0DC;
+    --accent: #5B3DF0;
+    --accent-ink: #FFFFFF;
+    --accent-hover: #4A2FD6;
+    --error: #C0293B;
+    --error-bg: #FCEBEC;
+    --focus-ring: rgba(91, 61, 240, 0.28);
+    --panel-bg: #14131A;
+    --panel-ink: #F3F1EE;
+    --panel-muted: #ADA9B5;
+    --panel-line: rgba(255, 255, 255, 0.12);
+    --shadow: 0 24px 60px -28px rgba(20, 19, 26, 0.35), 0 2px 10px rgba(20, 19, 26, 0.06);
+    --toast-bg: #17161D;
+    --toast-ink: #F3F1EE;
+    color-scheme: light;
+  }
+
+  html[data-theme="dark"] {
+    --bg: #0F0E13;
+    --surface: #17161D;
+    --surface-2: #1C1B23;
+    --ink: #F1EFEC;
+    --muted: #9E9AA8;
+    --line: #2C2B33;
+    --accent: #8672FF;
+    --accent-ink: #0F0E13;
+    --accent-hover: #9C8CFF;
+    --error: #FF8A94;
+    --error-bg: rgba(255, 138, 148, 0.12);
+    --focus-ring: rgba(134, 114, 255, 0.32);
+    --panel-bg: #0A0910;
+    --panel-ink: #F3F1EE;
+    --panel-muted: #918DA0;
+    --panel-line: rgba(255, 255, 255, 0.08);
+    --shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(0, 0, 0, 0.35);
+    --toast-bg: #F3F1EE;
+    --toast-ink: #0F0E13;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 20px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 1040px;
+    position: relative;
+  }
+
+  /* Page header — logo + theme toggle above the card */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .page-logo {
+    height: 52px;
+    width: auto;
+    display: block;
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover { transform: translateY(-1px); }
+  .theme-toggle:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--focus-ring);
+  }
+  .theme-toggle svg { width: 18px; height: 18px; }
+  .theme-toggle .icon-moon { display: none; }
+  html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+  html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+  /* Card */
+  .card {
+    display: grid;
+    grid-template-columns: 0.86fr 1.14fr;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+  }
+
+  /* Brand panel */
+  .panel {
+    background: var(--panel-bg);
+    color: var(--panel-ink);
+    padding: 48px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--panel-line);
+    transition: background-color 0.25s ease;
+  }
+  .panel-top img { display: none; }
+  .panel h1 {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 1.25;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+  .panel p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--panel-muted);
+    margin: 0;
+    max-width: 34ch;
+  }
+  .panel-list {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .panel-list li {
+    font-size: 14px;
+    color: var(--panel-muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .panel-list li::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--panel-muted);
+    flex-shrink: 0;
+  }
+  .dot-row {
+    display: flex;
+    gap: 7px;
+    margin-top: 40px;
+  }
+  .dot-row span {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    display: inline-block;
+  }
+
+  /* Form side */
+  .form-side {
+    padding: 48px 44px;
+  }
+  .form-side h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 24px;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .form-side .lede {
+    font-size: 15px;
+    color: var(--muted);
+    margin: 0 0 30px;
+    line-height: 1.55;
+  }
+
+  form { display: flex; flex-direction: column; gap: 18px; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  .field { display: flex; flex-direction: column; }
+
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 7px;
+  }
+
+  input, select, textarea {
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    width: 100%;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.25s ease;
+  }
+
+  textarea { resize: vertical; min-height: 120px; line-height: 1.5; }
+
+  input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.85; }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--focus-ring);
+    background: var(--surface);
+  }
+
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3e%3cpath d='M5 7.5L10 12.5L15 7.5' stroke='%236E6B76' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+  }
+
+  /* Phone prefix wrapper */
+  .phone-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .phone-prefix {
+    position: absolute;
+    left: 14px;
+    font-size: 15px;
+    color: var(--muted);
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+  .phone-wrap input {
+    padding-left: 46px;
+  }
+
+  /* Field helpers */
+  .field-hint {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 6px;
+  }
+  .field-hint-text {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+
+  /* Label row with char counter */
+  .field-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 7px;
+  }
+  .field-label-row label { margin-bottom: 0; }
+  .char-count {
+    font-size: 12px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .char-count.near-limit { color: #E09D23; }
+  .char-count.at-limit   { color: var(--error); }
+
+  .field[data-invalid="true"] select,
+  .field[data-invalid="true"] textarea {
+    border-color: var(--error);
+    background: var(--error-bg);
+  }
+  .field[data-invalid="true"] input:focus,
+  .field[data-invalid="true"] select:focus,
+  .field[data-invalid="true"] textarea:focus {
+    box-shadow: 0 0 0 4px rgba(192, 41, 59, 0.18);
+  }
+
+  .error-msg {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--error);
+    margin-top: 7px;
+  }
+  .field[data-invalid="true"] .error-msg { display: flex; }
+  .error-msg svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  .submit-btn {
+    margin-top: 6px;
+    align-self: flex-start;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: none;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 14px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    min-height: 48px;
+    transition: background-color 0.18s ease, transform 0.1s ease;
+  }
+  .submit-btn:hover { background: var(--accent-hover); }
+  .submit-btn:active { transform: translateY(1px); }
+  .submit-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--focus-ring);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translate(-50%, 16px);
+    background: var(--toast-bg);
+    color: var(--toast-ink);
+    padding: 14px 22px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 16px 40px -14px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 20;
+    max-width: calc(100vw - 40px);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  .toast svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+  @media (max-width: 1024px) and (min-width: 861px) {
+    .page-logo { height: 44px; }
+  }
+
+  @media (max-width: 860px) {
+    body { padding: 48px 16px 40px; }
+    .page-logo { height: 34px; }
+    .card { grid-template-columns: 1fr; border-radius: 18px; }
+    .panel { border-right: none; border-bottom: 1px solid var(--panel-line); padding: 34px 26px; }
+    .panel h1 { font-size: 24px; }
+    .panel-list { display: none; }
+    .dot-row { margin-top: 24px; }
+    .form-side { padding: 32px 22px 36px; }
+    .field-row { grid-template-columns: 1fr; gap: 18px; }
+    .submit-btn { align-self: stretch; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header class="page-header">
+    <img class="page-logo" src="asset/logo.jpg" alt="Praxto">
+    <button type="button" class="theme-toggle" id="themeToggle" aria-pressed="false" aria-label="Switch to dark mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/></svg>
+    </button>
+  </header>
+
+  <div class="card">
+    <div class="panel">
+      <div class="panel-top">
+        <img src="data:image/jpeg;base64,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bUnD/ST0B3U3EYSEhuGrvXqNjKOmeF9uGwkFBrlHfa7GZdaM4IiysOTHXMSLyiyfDB+aAABAafiX/9oADAMBAAIAAwAAABD7777777777777777777777777777777777777777777775n7777777777jsr777777777sYOr777777776r/sP777777776j7y3777777776h377777777776777777777777777777777777777777777777777777777777/8QAIhEBAAEDAwUBAQAAAAAAAAAAAREAITEwQVFQYXGBkaGx/9oACAEDAQE/EOnN0aZYGWpqzlFvumLAAn5T7gXHi9il0Zmm5ZcTwe70ZEEBwM29Ix20gUwifaVOwe9v7Sx9dHlIv2hoZIQkjeFX9Y0sKHQuWpV2B4rKdLCsOuf/xAAjEQACAQMEAgMBAAAAAAAAAAABESEAMWEwQVFxUPCBkaHB/9oACAECAQE/EPMn0Y9UbARW2kUI7xQi2THZ3J9xR8IBBYFNM1GkUN4TVkNcAIc5fDtPc8+RBAKUs+4KwqRcO34NIVg0Ox+xP8qSYLEinQMfKdPSFHzn/8QAJhABAAEEAQMEAgMAAAAAAAAAAREAITFBUUBxgWGRofAQcCBQwf/aAAgBAQABPxD9SBLc6WlCwBdWoNRK+wDOEjIDeF30+Qj/AIeSJYMLJLI/rXhx4wMQpC2SCTLBqVtSR+mYDSvwPJqbLg7HZLPZRvcIPVMzO5LKKQe08guImTpHhxgg0AGF0WU0jUVAnWXtIARDSNzWGJ6DuWpxZFhAsBN70KxoBj1HImkvSw3N7IvEaEiCA6N487A8WpTkD51ekeBS9m3zQkJUFwMT5XM+KcsiQMI0i5SPMnJbCheI3NIk8woAfB8OkeQEZhgz6GyPe1QKlhmZL0SPwsqyrYa7AoHk4VL5cHosZyvHSPFHKgZGhEPxb8AbPgyVDgSSoyjciWAnpRZhwKcSgxgURcosQsAQQCiROhokru2im+3pHn3vCoeLDiYnJQR3QxDINc/cSitTkF7FC5qErSzj1aJMfwKODSmJcWaFGa3pyLrKRKIuU9I8+94UqQkUvGP+/wAVqDQ0ZuC0oSl2Lz0f3vCisJMSdQfe8KlsZmaki4BXZJEgvUXx6lKoozhkGAg0ZYEAIA/Uv//Z" alt="Praxto logo">
+        <h1>Tell us what you're building.</h1>
+        <p>Share a few details about your project and someone from Praxto will follow up within one business day.</p>
+        <ul class="panel-list">
+          <li>Web &amp; product design</li>
+          <li>Mobile &amp; software development</li>
+          <li>Brand &amp; digital marketing</li>
+          <li>SEO &amp; performance</li>
+        </ul>
+      </div>
+      <div class="dot-row" aria-hidden="true">
+        <span style="background:#E4483A"></span>
+        <span style="background:#F2A93B"></span>
+        <span style="background:#F5D949"></span>
+        <span style="background:#4CAF6D"></span>
+        <span style="background:#2D9CDB"></span>
+        <span style="background:#8B5CF6"></span>
+      </div>
+    </div>
+
+    <div class="form-side">
+      <h2>Start an enquiry</h2>
+      <p class="lede">Tell us about your project and our team will get back to you.</p>
+
+      <form id="leadForm" novalidate>
+        <div class="field-row">
+          <div class="field" id="field-name" data-invalid="false">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Rahul Sharma" autocomplete="name" aria-describedby="err-name">
+            <span class="error-msg" id="err-name" role="alert">
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm.75 4.5a.75.75 0 00-1.5 0v4a.75.75 0 001.5 0v-4zM10 13.25a.9.9 0 100 1.8.9.9 0 000-1.8z"/></svg>
+              Enter your name.
+            </span>
+          </div>
+          <div class="field" id="field-business" data-invalid="false">
+            <label for="business">Business name</label>
+            <input type="text" id="business" name="business" placeholder="Sharma Enterprises" autocomplete="organization" aria-describedby="err-business">
+            <span class="error-msg" id="err-business" role="alert">
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm.75 4.5a.75.75 0 00-1.5 0v4a.75.75 0 001.5 0v-4zM10 13.25a.9.9 0 100 1.8.9.9 0 000-1.8z"/></svg>
+              Enter your business name.
+            </span>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field" id="field-email" data-invalid="false">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="rahul@gmail.com" autocomplete="email" aria-describedby="err-email">
+            <span class="error-msg" id="err-email" role="alert">
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm.75 4.5a.75.75 0 00-1.5 0v4a.75.75 0 001.5 0v-4zM10 13.25a.9.9 0 100 1.8.9.9 0 000-1.8z"/></svg>
+              Enter a valid email address.
+            </span>
+          </div>
+          <div class="field" id="field-phone" data-invalid="false">
+            <label for="phone">Phone <span class="field-hint">Indian mobile</span></label>
+            <div class="phone-wrap">
+              <span class="phone-prefix" aria-hidden="true">+91</span>
+              <input type="tel" id="phone" name="phone" placeholder="9876543210" autocomplete="tel" aria-describedby="err-phone hint-phone" maxlength="10" inputmode="numeric">
+            </div>
+            <span class="field-hint-text" id="hint-phone">10-digit mobile number</span>
+            <span class="error-msg" id="err-phone" role="alert">
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm.75 4.5a.75.75 0 00-1.5 0v4a.75.75 0 001.5 0v-4zM10 13.25a.9.9 0 100 1.8.9.9 0 000-1.8z"/></svg>
+              Enter a valid 10-digit Indian mobile number.
+            </span>
+          </div>
+        </div>
+
+        <div class="field" id="field-service" data-invalid="false">
+          <label for="service">Service required</label>
+          <select id="service" name="service" aria-describedby="err-service">
+            <option value="" disabled selected>Select a service</option>
+            <option value="web-development">Web Development</option>
+            <option value="mobile-app-development">Mobile App Development</option>
+            <option value="ui-ux-design">UI / UX Design</option>
+            <option value="branding">Branding &amp; Identity</option>
+            <option value="digital-marketing">Digital Marketing</option>
+            <option value="seo">SEO &amp; Performance</option>
+            <option value="ecommerce">E-commerce Solutions</option>
+            <option value="custom-software">Custom Software</option>
+            <option value="other">Other / Not sure yet</option>
+          </select>
+          <span class="error-msg" id="err-service" role="alert">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm.75 4.5a.75.75 0 00-1.5 0v4a.75.75 0 001.5 0v-4zM10 13.25a.9.9 0 100 1.8.9.9 0 000-1.8z"/></svg>
+            Select a service.
+          </span>
+        </div>
+
+        <div class="field" id="field-message" data-invalid="false">
+          <div class="field-label-row">
+            <label for="message">Message</label>
+            <span class="char-count" id="char-count" aria-live="polite">0 / 500</span>
+          </div>
+          <textarea id="message" name="message" rows="5" placeholder="Tell us about your project — scope, timeline, budget, or anything else that helps us understand your needs…" aria-describedby="err-message" maxlength="500"></textarea>
+          <span class="error-msg" id="err-message" role="alert">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm.75 4.5a.75.75 0 00-1.5 0v4a.75.75 0 001.5 0v-4zM10 13.25a.9.9 0 100 1.8.9.9 0 000-1.8z"/></svg>
+            Please describe your project (at least 10 characters).
+          </span>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit enquiry</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-7.5 7.5a1 1 0 01-1.4 0l-3.5-3.5a1 1 0 111.4-1.4l2.8 2.8 6.8-6.8a1 1 0 011.4 0z" clip-rule="evenodd"/></svg>
+  <span id="toastMsg">Thanks! Your enquiry has been submitted.</span>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Theme ---------- */
+  var root = document.documentElement;
+  var toggleBtn = document.getElementById('themeToggle');
+  var STORAGE_KEY = 'praxto-theme';
+
+  function getPreferredTheme() {
+    var stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === 'light' || stored === 'dark') return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function setTheme(theme, persist) {
+    root.setAttribute('data-theme', theme);
+    toggleBtn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    toggleBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    if (persist) localStorage.setItem(STORAGE_KEY, theme);
+  }
+
+  setTheme(getPreferredTheme(), false);
+
+  toggleBtn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    setTheme(next, true);
+  });
+
+  var mql = window.matchMedia('(prefers-color-scheme: dark)');
+  if (mql.addEventListener) {
+    mql.addEventListener('change', function (e) {
+      if (!localStorage.getItem(STORAGE_KEY)) setTheme(e.matches ? 'dark' : 'light', false);
+    });
+  }
+
+  /* ---------- Validation ---------- */
+  var form = document.getElementById('leadForm');
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+
+  var validators = {
+    name: function (v) { return v.trim().length > 0; },
+    business: function (v) { return v.trim().length > 0; },
+    email: function (v) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+    },
+    phone: function (v) {
+      /* Strictly 10 digits, starting with 6, 7, 8, or 9 — no spaces, no prefix */
+      var digits = v.trim().replace(/\D/g, '');
+      return /^[6-9]\d{9}$/.test(digits);
+    },
+    service: function (v) { return v.trim().length > 0; },
+    message: function (v) { return v.trim().length >= 10; }
+  };
+
+  var fieldIds = ['name', 'business', 'email', 'phone', 'service', 'message'];
+
+  function fieldEl(id) { return document.getElementById('field-' + id); }
+  function inputEl(id) { return document.getElementById(id); }
+
+  function setInvalid(id, invalid) {
+    var wrap = fieldEl(id);
+    var input = inputEl(id);
+    wrap.setAttribute('data-invalid', invalid ? 'true' : 'false');
+    if (invalid) {
+      input.setAttribute('aria-invalid', 'true');
+    } else {
+      input.removeAttribute('aria-invalid');
+    }
+  }
+
+  function validateField(id) {
+    var input = inputEl(id);
+    var value = input.value;
+    var trimmedValue = value.trim();
+    /* Only auto-trim on blur, and never for textarea (would swallow spaces mid-typing) */
+    var isTextarea = input.tagName === 'TEXTAREA';
+    if (!isTextarea && trimmedValue !== value && input.tagName !== 'SELECT') {
+      input.value = trimmedValue;
+    }
+    var valid = validators[id](isTextarea ? value : input.value);
+    setInvalid(id, !valid);
+    return valid;
+  }
+
+  /* On blur, textarea gets trimmed for the final validator check only — not written back */
+  function validateFieldOnBlur(id) {
+    var input = inputEl(id);
+    var isTextarea = input.tagName === 'TEXTAREA';
+    var valueToCheck = isTextarea ? input.value.trim() : input.value.trim();
+    if (input.tagName !== 'SELECT' && !isTextarea) input.value = valueToCheck;
+    var valid = validators[id](valueToCheck);
+    setInvalid(id, !valid);
+    return valid;
+  }
+
+  fieldIds.forEach(function (id) {
+    var input = inputEl(id);
+    var eventName = (input.tagName === 'SELECT') ? 'change' : 'input';
+    input.addEventListener('blur', function () { validateFieldOnBlur(id); });
+    input.addEventListener(eventName, function () {
+      if (fieldEl(id).getAttribute('data-invalid') === 'true') validateField(id);
+    });
+  });
+
+  /* Restrict phone to digits only, max 10 chars */
+  var phoneInput = document.getElementById('phone');
+  phoneInput.addEventListener('input', function () {
+    var pos = this.selectionStart;
+    var cleaned = this.value.replace(/\D/g, '').slice(0, 10);
+    if (cleaned !== this.value) {
+      this.value = cleaned;
+      try { this.setSelectionRange(pos, pos); } catch (e) {}
+    }
+  });
+
+  /* Char counter for message */
+  var messageInput = document.getElementById('message');
+  var charCount = document.getElementById('char-count');
+  var MAX_MSG = 500;
+  function updateCharCount() {
+    var len = messageInput.value.length;
+    charCount.textContent = len + ' / ' + MAX_MSG;
+    charCount.classList.remove('near-limit', 'at-limit');
+    if (len >= MAX_MSG) charCount.classList.add('at-limit');
+    else if (len >= MAX_MSG * 0.85) charCount.classList.add('near-limit');
+  }
+  messageInput.addEventListener('input', updateCharCount);
+
+  function showToast(message) {
+    document.getElementById('toastMsg').textContent = message;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 4200);
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var allValid = true;
+    var firstInvalidId = null;
+
+    fieldIds.forEach(function (id) {
+      var valid = validateField(id);
+      if (!valid && !firstInvalidId) firstInvalidId = id;
+      if (!valid) allValid = false;
+    });
+
+    if (!allValid) {
+      inputEl(firstInvalidId).focus();
+      return;
+    }
+
+    showToast('Thanks! Your enquiry has been submitted.');
+    form.reset();
+    fieldIds.forEach(function (id) { setInvalid(id, false); });
+    updateCharCount();
+  });
+})();
+</script>
+
+</body>
+</html>
