@@ -37,7 +37,10 @@ button, input, select, textarea { font: inherit; }
 .page { width: min(1040px, calc(100% - 40px)); margin: 56px auto; }
 .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .page-logo { width: auto; height: 52px; object-fit: contain; }
-.theme-toggle { border: 1px solid var(--line); border-radius: 999px; width: 48px; height: 40px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.theme-toggle { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 50%; color: var(--ink); background: var(--surface); cursor: pointer; box-shadow: 0 8px 20px -14px rgba(20, 19, 26, .6); transition: transform .18s ease, border-color .18s ease, background-color .18s ease; }
+.theme-toggle:hover { transform: translateY(-2px); border-color: var(--accent); }
+.theme-toggle:focus-visible { outline: 3px solid rgba(91, 61, 240, .25); outline-offset: 3px; }
+.theme-toggle svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
 .card { display: grid; grid-template-columns: .86fr 1.14fr; overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: var(--surface); box-shadow: 0 24px 60px -28px rgba(20, 19, 26, .35); }
 .panel { display: flex; flex-direction: column; justify-content: space-between; padding: 48px 40px; background: var(--panel-bg); color: var(--panel-ink); }
 .eyebrow { margin: 0 0 28px; color: #f2a93b; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }

@@ -3,6 +3,7 @@ import { logEvent } from 'firebase/analytics';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { analytics } from './firebase.js';
 import { db } from './firebase.js';
+import logo from '../asset/logo.jpg';
 
 const MAX_MESSAGE_LENGTH = 500;
 const initialForm = {
@@ -92,7 +93,7 @@ function App() {
   return (
     <main className="page">
       <header className="page-header">
-        <img className="page-logo" src="/asset/logo.jpg" alt="Praxto" />
+        <img className="page-logo" src={logo} alt="Praxto" />
         <button
           className="theme-toggle"
           type="button"
@@ -100,7 +101,11 @@ function App() {
           aria-pressed={theme === 'dark'}
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         >
-          {theme === 'dark' ? 'Sun' : 'Moon'}
+          {theme === 'dark' ? (
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" /></svg>
+          ) : (
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.7A8.5 8.5 0 0 1 9.3 3.5 8.5 8.5 0 1 0 20.5 14.7Z" /></svg>
+          )}
         </button>
       </header>
 
