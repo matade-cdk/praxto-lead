@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /leads/{leadId} {
+      allow create: if validLead(request.resource.data);
+      allow read, update, delete: if isAdmin();
+    }
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'admin@gmail.com';
+    }
+
+    function validLead(lead) {
+      return lead.keys().hasAll(['name', 'business', 'email', 'phone', 'service', 'message', 'status', 'createdAt'])
+        && lead['name'].size() > 0 && lead['name'].size() <= 120
+        && lead['business'].size() > 0 && lead['business'].size() <= 160
+        && lead['email'].matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')
+        && lead['phone'].matches('^[6-9][0-9]{9}$')
+        && lead['service'].size() > 0
+        && lead['message'].size() >= 10 && lead['message'].size() <= 500
+        && lead['status'] == 'new'
+        && lead['createdAt'] == request.time;
+    }
+  }
+}

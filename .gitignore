@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+frontend/dist/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+service-account.json
+**/service-account.json
+
+# Firebase local cache
+.firebase/
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
