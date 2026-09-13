@@ -4,12 +4,7 @@ import { collection, deleteDoc, doc, getDocs, orderBy, query, serverTimestamp, u
 import { auth, db } from '../firebase.js';
 
 const emptyLead = { name: '', business: '', email: '', phone: '', service: '', message: '', status: 'new' };
-const serviceOptions = [
-  ['web-development', 'Web Development'], ['mobile-app-development', 'Mobile App Development'],
-  ['ui-ux-design', 'UI / UX Design'], ['branding', 'Branding & Identity'],
-  ['digital-marketing', 'Digital Marketing'], ['seo', 'SEO & Performance'],
-  ['ecommerce', 'E-commerce Solutions'], ['custom-software', 'Custom Software'], ['other', 'Other / Not sure yet']
-];
+import { services as serviceOptions, getServiceLabel, formatTimestamp } from '../constants.js';
 
 function AdminApp() {
   const [user, setUser] = useState(undefined);
@@ -93,10 +88,29 @@ function AdminApp() {
       {status && <p className="admin-status">{status}</p>}
       {editing && <LeadEditor lead={editing} setLead={setEditing} onSubmit={saveLead} onCancel={() => setEditing(null)} busy={busy} />}
       <section className="lead-list">
-        {leads.length === 0 ? <p className="empty-state">No enquiries yet.</p> : leads.map((lead) => <article className="lead-row" key={lead.id}>
-          <div><strong>{lead.name}</strong><span>{lead.business} · {lead.email}</span><span>{lead.service} · {lead.status}</span></div>
-          <div className="row-actions"><button className="secondary-button" onClick={() => setEditing({ ...lead })}>Edit</button><button className="danger-button" onClick={() => deleteLead(lead.id)}>Delete</button></div>
-        </article>)}
+        {leads.length === 0 ? <p className="empty-state">No enquiries yet.</p> : leads.map((lead) => (
+          <article className="lead-row" key={lead.id}>
+            <div className="lead-details">
+              <div className="lead-header">
+                <span className="lead-name">
+                  {lead.name}
+                  {lead.business && <span className="lead-business">({lead.business})</span>}
+                </span>
+                <span className={`badge badge-${lead.status}`}>{lead.status}</span>
+              </div>
+              <div className="lead-meta">
+                <span className="meta-item">📧 {lead.email}</span>
+                {lead.phone && <span className="meta-item">📞 {lead.phone}</span>}
+                <span className="meta-item">💼 {getServiceLabel(lead.service)}</span>
+                <span className="meta-item">🕒 {formatTimestamp(lead.createdAt)}</span>
+              </div>
+            </div>
+            <div className="row-actions">
+              <button className="secondary-button" onClick={() => setEditing({ ...lead })}>Edit</button>
+              <button className="danger-button" onClick={() => deleteLead(lead.id)}>Delete</button>
+            </div>
+          </article>
+        ))}
       </section>
     </main>
   );
@@ -108,7 +122,23 @@ function Login({ email, password, setEmail, setPassword, onSubmit, busy, status 
 
 function LeadEditor({ lead, setLead, onSubmit, onCancel, busy }) {
   const update = (event) => setLead({ ...lead, [event.target.name]: event.target.value });
-  return <form className="editor" onSubmit={onSubmit}><div className="editor-heading"><h2>{lead.id ? 'Edit lead' : 'Create lead'}</h2><button type="button" className="secondary-button" onClick={onCancel}>Close</button></div><div className="editor-grid">{[['name', 'Name'], ['business', 'Business'], ['email', 'Email'], ['phone', 'Phone']].map(([name, label]) => <label key={name}>{label}<input name={name} value={lead[name] || ''} onChange={update} required /></label>)}<label>Service<select name="service" value={lead.service || ''} onChange={update} required><option value="" disabled>Select a service</option>{serviceOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label>Status<select name="status" value={lead.status || 'new'} onChange={update}><option value="new">New</option><option value="contacted">Contacted</option><option value="qualified">Qualified</option><option value="closed">Closed</option></select></label></div><label>Message<textarea name="message" value={lead.message || ''} onChange={update} rows="5" required /></label><button className="primary-button" disabled={busy}>{busy ? 'Saving...' : 'Save lead'}</button></form>;
+  return (
+    <div className="modal-overlay" onClick={(e) => { if (e.target.className === 'modal-overlay') onCancel(); }}>
+      <form className="editor" onSubmit={onSubmit}>
+        <div className="editor-heading">
+          <h2>{lead.id ? 'Edit lead' : 'Create lead'}</h2>
+          <button type="button" className="secondary-button" onClick={onCancel}>Close</button>
+        </div>
+        <div className="editor-grid">
+          {[['name', 'Name'], ['business', 'Business'], ['email', 'Email'], ['phone', 'Phone']].map(([name, label]) => <label key={name}>{label}<input name={name} value={lead[name] || ''} onChange={update} required /></label>)}
+          <label>Service<select name="service" value={lead.service || ''} onChange={update} required><option value="" disabled>Select a service</option>{serviceOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+          <label>Status<select name="status" value={lead.status || 'new'} onChange={update}><option value="new">New</option><option value="contacted">Contacted</option><option value="qualified">Qualified</option><option value="closed">Closed</option></select></label>
+        </div>
+        <label>Message<textarea name="message" value={lead.message || ''} onChange={update} rows="5" required /></label>
+        <button className="primary-button" disabled={busy}>{busy ? 'Saving...' : 'Save lead'}</button>
+      </form>
+    </div>
+  );
 }
 
 export default AdminApp;

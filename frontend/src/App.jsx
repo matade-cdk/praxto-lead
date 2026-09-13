@@ -14,17 +14,7 @@ const initialForm = {
   service: '',
   message: ''
 };
-const services = [
-  ['web-development', 'Web Development'],
-  ['mobile-app-development', 'Mobile App Development'],
-  ['ui-ux-design', 'UI / UX Design'],
-  ['branding', 'Branding & Identity'],
-  ['digital-marketing', 'Digital Marketing'],
-  ['seo', 'SEO & Performance'],
-  ['ecommerce', 'E-commerce Solutions'],
-  ['custom-software', 'Custom Software'],
-  ['other', 'Other / Not sure yet']
-];
+import { services } from './constants.js';
 
 function validate(form) {
   return {

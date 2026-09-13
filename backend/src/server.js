@@ -4,7 +4,7 @@ import express from 'express';
 import { applicationDefault, cert, getApps, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, Timestamp } from 'firebase-admin/firestore';
-
+import { services } from '../../frontend/src/constants.js';
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5500')
@@ -138,7 +138,7 @@ function validateLead(lead) {
   if (!lead.business) errors.push('business');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(lead.email)) errors.push('email');
   if (!/^[6-9]\d{9}$/.test(lead.phone)) errors.push('phone');
-  if (!lead.service) errors.push('service');
+  if (!lead.service || !services.some((s) => s[0] === lead.service)) errors.push('service');
   if (lead.message.length < 10 || lead.message.length > 500) errors.push('message');
   return errors;
 }
