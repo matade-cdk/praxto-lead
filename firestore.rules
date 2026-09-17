@@ -3,7 +3,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /leads/{leadId} {
-      allow create: if validLead(request.resource.data);
+      allow create: if validLead(request.resource.data) || isAdmin();
       allow read, update, delete: if isAdmin();
     }
 
