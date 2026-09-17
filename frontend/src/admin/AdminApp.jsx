@@ -59,6 +59,7 @@ function AdminApp() {
       setEditing(null);
       await loadLeads();
     } catch (error) {
+      console.error('Error saving lead:', error);
       setStatus('Unable to save lead. Check your Firebase permissions.');
     } finally {
       setBusy(false);
